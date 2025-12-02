@@ -58,5 +58,7 @@ data = nori.parse_plate_reader_data("experiment_001.txt")
 
 <div align="center">
 
+Contributions from members of the Raman Lab. Mostly written and maintained by Jonah O'Mara Schwartz
+
 
 </div>
