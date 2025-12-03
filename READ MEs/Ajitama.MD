@@ -2,7 +2,7 @@
 
 ## Tools to Turn You into a PyMOL Pro
 
-This package is different from the other ones in Raman Shop. The purpose of this package is to be loaded into your pymolrc to give you tons of tools to improve your PyMOL experience! To use, go to `File > Edit pymolrc` then add `run path/to/pymol_utilities.py`. Reload and get PyMOLing!
+This package is different from the other ones in Raman Shop. The purpose of this package is to be loaded into your pymolrc to give you tons of tools to improve your PyMOL experience! To use, go to `File > Edit pymolrc` then add `run path/to/Ajitama.py`. Reload and get PyMOLing!
 
 ---
 
