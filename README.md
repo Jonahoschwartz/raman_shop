@@ -37,7 +37,7 @@ Each package has its own README in the `readme` folder.
 ```bash
 conda activate MyEnvironmentName
 conda install git pip
-pip install git+git://github.com/Jonahoschwartz/raman_shop.git
+pip install git+https://github.com/Jonahoschwartz/raman_shop.git
 ```
 
 ## Basic use
