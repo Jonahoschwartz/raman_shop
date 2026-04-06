@@ -96,7 +96,128 @@ def coloraf(selection="all"):
     cmd.color("cyan", f"{selection} and b<90 and b>70")
     cmd.color("yellow", f"{selection} and b<70 and b>50")
     cmd.color("orange", f"{selection} and b<50")
+def get_colors_silas():
+    """
+    Register Silas custom color palette for PyMOL.
 
+    An 8-color palette spanning cool teals through warm purples,
+    designed for protein visualization.
+
+    Source: https://coolors.co/4f8da7-2bb1a1-86b26e-e1b23a-ee842b-e45c3a-c66c79-a87bb7
+    """
+    colors = {
+        "silas_teal":     [79 / 255.0,  141 / 255.0, 167 / 255.0], # #4F8DA7
+        "silas_seafoam":  [43 / 255.0,  177 / 255.0, 161 / 255.0], # #2BB1A1
+        "silas_sage":     [134 / 255.0, 178 / 255.0, 110 / 255.0], # #86B26E
+        "silas_gold":     [225 / 255.0, 178 / 255.0, 58 / 255.0],  # #E1B23A
+        "silas_amber":    [238 / 255.0, 132 / 255.0, 43 / 255.0],  # #EE842B
+        "silas_coral":    [228 / 255.0, 92 / 255.0,  58 / 255.0],  # #E45C3A
+        "silas_rose":     [198 / 255.0, 108 / 255.0, 121 / 255.0], # #C66C79
+        "silas_lavender": [168 / 255.0, 123 / 255.0, 183 / 255.0], # #A87BB7
+    }
+    for name, rgb in colors.items():
+        cmd.set_color(name, rgb)
+
+
+def get_colors_wong():
+    """
+    Register Wong colorblind-safe color palette for PyMOL.
+
+    7-color palette published by Bang Wong (2011) in Nature Methods,
+    optimized for deuteranopia and protanopia. A close companion to
+    Okabe-Ito; preferred by many scientific journals.
+
+    Reference:
+        Wong B. (2011) Nature Methods 8, 441.
+        https://doi.org/10.1038/nmeth.1618
+    """
+    colors = {
+        "wong_orange":   [230 / 255.0, 159 / 255.0,   0 / 255.0], # #E69F00
+        "wong_sky_blue": [ 86 / 255.0, 180 / 255.0, 233 / 255.0], # #56B4E9
+        "wong_green":    [  0 / 255.0, 158 / 255.0, 115 / 255.0], # #009E73
+        "wong_yellow":   [240 / 255.0, 228 / 255.0,  66 / 255.0], # #F0E442
+        "wong_blue":     [  0 / 255.0, 114 / 255.0, 178 / 255.0], # #0072B2
+        "wong_vermil":   [213 / 255.0,  94 / 255.0,   0 / 255.0], # #D55E00
+        "wong_pink":     [204 / 255.0, 121 / 255.0, 167 / 255.0], # #CC79A7
+    }
+    for name, rgb in colors.items():
+        cmd.set_color(name, rgb)
+
+
+def get_colors_paul_tol():
+    """
+    Register Paul Tol 'Bright' colorblind-safe palette for PyMOL.
+
+    6-color high-contrast scheme designed for scientific figures,
+    readable in print, on screen, and under colorblindness simulations.
+
+    Reference:
+        Tol P. (2021) "Colour schemes"
+        https://personal.sron.nl/~pault/
+    """
+    colors = {
+        "tol_blue":   [ 68 / 255.0, 119 / 255.0, 170 / 255.0], # #4477AA
+        "tol_cyan":   [ 66 / 255.0, 170 / 255.0, 153 / 255.0], # #42AACC (adjusted)
+        "tol_green":  [ 34 / 255.0, 136 / 255.0,  51 / 255.0], # #228833
+        "tol_yellow": [204 / 255.0, 187 / 255.0,  68 / 255.0], # #CCBB44
+        "tol_red":    [238 / 255.0, 102 / 255.0, 119 / 255.0], # #EE6677
+        "tol_purple": [170 / 255.0,  51 / 255.0, 119 / 255.0], # #AA3377
+    }
+    for name, rgb in colors.items():
+        cmd.set_color(name, rgb)
+
+
+def get_colors_tableau():
+    """
+    Register Tableau 10 color palette for PyMOL.
+
+    The default 10-color categorical palette from Tableau / D3.js,
+    widely used in data visualization. Useful for matching figure
+    aesthetics between PyMOL and Python plotting libraries.
+
+    Reference:
+        https://www.tableau.com/blog/colors-upgrade-tableau-10
+    """
+    colors = {
+        "tab_blue":    [ 78 / 255.0, 121 / 255.0, 167 / 255.0], # #4E79A7
+        "tab_orange":  [242 / 255.0, 142 / 255.0,  43 / 255.0], # #F28E2B
+        "tab_red":     [225 / 255.0,  87 / 255.0,  89 / 255.0], # #E15759
+        "tab_teal":    [ 118/ 255.0, 183 / 255.0, 178 / 255.0], # #76B7B2
+        "tab_green":   [ 89 / 255.0, 161 / 255.0,  79 / 255.0], # #59A14F
+        "tab_yellow":  [237 / 255.0, 201 / 255.0,  72 / 255.0], # #EDC948
+        "tab_purple":  [176 / 255.0, 122 / 255.0, 161 / 255.0], # #B07AA1
+        "tab_pink":    [255 / 255.0, 157 / 255.0, 167 / 255.0], # #FF9DA7
+        "tab_brown":   [156 / 255.0, 117 / 255.0,  95 / 255.0], # #9C755F
+        "tab_gray":    [186 / 255.0, 176 / 255.0, 172 / 255.0], # #BAB0AC
+    }
+    for name, rgb in colors.items():
+        cmd.set_color(name, rgb)
+
+
+def get_colors_mpl():
+    """
+    Register Matplotlib default (tab10) categorical palette for PyMOL.
+
+    The standard 10-color cycle used by matplotlib, seaborn, and pandas.
+    Handy for keeping PyMOL figures consistent with Python plots.
+
+    Reference:
+        https://matplotlib.org/stable/gallery/color/named_colors.html
+    """
+    colors = {
+        "mpl_blue":   [ 31 / 255.0, 119 / 255.0, 180 / 255.0], # #1F77B4
+        "mpl_orange": [255 / 255.0, 127 / 255.0,  14 / 255.0], # #FF7F0E
+        "mpl_green":  [ 44 / 255.0, 160 / 255.0,  44 / 255.0], # #2CA02C
+        "mpl_red":    [214 / 255.0,  39 / 255.0,  40 / 255.0], # #D62728
+        "mpl_purple": [148 / 255.0, 103 / 255.0, 189 / 255.0], # #9467BD
+        "mpl_brown":  [140 / 255.0,  86 / 255.0,  75 / 255.0], # #8C564B
+        "mpl_pink":   [227 / 255.0, 119 / 255.0, 194 / 255.0], # #E377C2
+        "mpl_gray":   [127 / 255.0, 127 / 255.0, 127 / 255.0], # #7F7F7F
+        "mpl_yellow": [188 / 255.0, 189 / 255.0,  34 / 255.0], # #BCBD22
+        "mpl_cyan":   [ 23 / 255.0, 190 / 255.0, 207 / 255.0], # #17BECF
+    }
+    for name, rgb in colors.items():
+        cmd.set_color(name, rgb)
 
 def color_by_csv(csv_path, selection="all", chain=None, colors="blue_white_red"):
     """
@@ -475,7 +596,11 @@ cmd.extend("color_by_hex", color_by_hex)
 cmd.extend("coloraf", coloraf)
 cmd.extend("color_by_csv", color_by_csv)
 cmd.extend("get_colors_rf_diffusion", get_colors_rf_diffusion)
-
+cmd.extend("get_colors_silas", get_colors_silas)
+cmd.extend("get_colors_wong", get_colors_wong)
+cmd.extend("get_colors_paul_tol", get_colors_paul_tol)
+cmd.extend("get_colors_tableau", get_colors_tableau)
+cmd.extend("get_colors_mpl", get_colors_mpl)
 # Rendering
 cmd.extend("get_lighting_rf_diffusion", get_lighting_rf_diffusion)
 
