@@ -20,6 +20,7 @@ import pandas as pd
 from Bio.Seq import Seq
 from Bio.Restriction import RestrictionBatch
 from Bio.Data import IUPACData
+from Bio.SeqUtils import MeltingTemp as mt
 
 # ============================================================================
 # CONSTANTS
@@ -314,7 +315,7 @@ def find_restriction_site_counts(
 # PRIMER DESIGN FOR MUTAGENESIS
 # ============================================================================
 
-def generate_suni_mutagensis_primers(
+def generate_suni_mutagenesis_primers(
         WT_seq: str,
         left_flank: str,
         right_flank: str,
@@ -502,210 +503,6 @@ def generate_suni_mutagensis_primers(
     print(f'NNSs = {NNSs}')
 
     return oligos_dict
-
-
-def gen_smart_nicking_lib(
-        WT_seq: str,
-        left_flank: str,
-        right_flank: str,
-        tm_left_min: float,
-        tm_left_max: float,
-        target_tm_right: float,
-        min_len_left: int,
-        max_len_left: int,
-        min_len_right: int,
-        max_len_right: int
-) -> dict:
-    """
-    Generate smart nicking library (alternative implementation).
-
-    From: https://github.com/lehner-lab/SUNi_mutagenesis/blob/main/SUNi_mutagenesis.ipynb
-
-    This is the number of codons INCLUDING the start codon, which we will not mutagenize.
-
-    Parameters
-    ----------
-    WT_seq : str
-        Wild-type coding sequence.
-    left_flank : str
-        Upstream flanking sequence.
-    right_flank : str
-        Downstream flanking sequence.
-    tm_left_min : float
-        Minimum Tm for left arm.
-    tm_left_max : float
-        Maximum Tm for left arm.
-    target_tm_right : float
-        Target Tm for right arm.
-    min_len_left : int
-        Minimum left arm length.
-    max_len_left : int
-        Maximum left arm length.
-    min_len_right : int
-        Minimum right arm length.
-    max_len_right : int
-        Maximum right arm length.
-
-    Returns
-    -------
-    dict
-        Dictionary of designed oligos.
-    """
-    codon_num = int(len(WT_seq) / 3)
-    full_seq = left_flank + WT_seq + right_flank
-    oligos_dict = {}
-
-    best_left_lens = []
-    best_right_lens = []
-    best_left_tms = []
-    best_right_tms = []
-    best_lens = []
-    best_tms = []
-
-    SSSs = 0
-    SSWs = 0
-    SWSs = 0
-    weak_clamps = 0
-    NNSs = 0
-    NNKs = 0
-
-    SW_dict = {'A': 'W', 'T': 'W', 'C': 'S', 'G': 'S'}
-
-    # Start the range with 1, so that we skip the start codon
-    for codon in range(1, codon_num):
-        # Define the codon
-        codon_start = len(left_flank) + codon * 3
-        codon_stop = len(left_flank) + (codon * 3) + 3
-        wt_codon = full_seq[codon_start:codon_stop]
-
-        # Find best homology arm on the left
-        temp_dict_left = {}
-        clamp_dict_left = {}
-        temp_winners_list = []
-        SW_winners_dict = {'SSS': [], 'SSW': [], 'SWS': []}
-
-        for i in range(min_len_left, max_len_left + 1):
-            left_tm = mt.Tm_NN(Seq(full_seq[codon_start - i:codon_start]))
-            temp_dict_left[i] = left_tm
-
-            if tm_left_min <= left_tm <= tm_left_max:
-                temp_winners_list.append(i)
-                left_clamp = ''.join([
-                    SW_dict[j]
-                    for j in full_seq[codon_start - i:codon_start][0:3]
-                ])
-                if left_clamp in ['SSS', 'SSW', 'SWS']:
-                    SW_winners_dict[left_clamp].append(i)
-
-        winner_found = False
-        best_len = 0
-        best_tm = 0
-        double_synth = False
-
-        # First look for SSS
-        for i in temp_winners_list:
-            if not winner_found:
-                if i in SW_winners_dict['SSS']:
-                    best_len = i
-                    best_tm = temp_dict_left[i]
-                    SSSs += 1
-                    winner_found = True
-
-        # If no SSS found, then look for SSW or SWS
-        for i in temp_winners_list:
-            if not winner_found:
-                if i in SW_winners_dict['SSW']:
-                    best_len = i
-                    best_tm = temp_dict_left[i]
-                    SSWs += 1
-                    winner_found = True
-                elif i in SW_winners_dict['SWS']:
-                    best_len = i
-                    best_tm = temp_dict_left[i]
-                    SWSs += 1
-                    winner_found = True
-
-        if winner_found:
-            best_left_seq = full_seq[codon_start - best_len:codon_start]
-            best_lens.append(best_len)
-            best_left_lens.append(best_len)
-            best_tms.append(best_tm)
-            best_left_tms.append(best_tm)
-        else:
-            # Try to adjust for the lack of good clamp, use Tm + 4
-            best_len, best_tm = min(
-                temp_dict_left.items(),
-                key=lambda x: abs((tm_left_min + 4) - x[1])
-            )
-            best_left_seq = full_seq[codon_start - best_len:codon_start]
-            best_tms.append(best_tm)
-            best_left_tms.append(best_tm)
-            double_synth = True
-            weak_clamps += 1
-
-        # Find best homology arm on the right
-        temp_dict_right = {}
-        for i in range(min_len_right, max_len_right + 1):
-            temp_dict_right[i] = mt.Tm_NN(
-                Seq(full_seq[codon_stop:codon_stop + i])
-            )
-
-        best_len, best_tm = min(
-            temp_dict_right.items(),
-            key=lambda x: abs(target_tm_right - x[1])
-        )
-        best_right_seq = full_seq[codon_stop:codon_stop + best_len]
-        best_lens.append(best_len)
-        best_right_lens.append(best_len)
-        best_tms.append(best_tm)
-        best_right_tms.append(best_tm)
-
-        # Assemble the oligo
-        if wt_codon[-1] in ['A', 'C', 'G']:
-            degen_codon = 'NNK'
-            NNKs += 1
-        elif wt_codon[-1] in ['T']:
-            degen_codon = 'NNS'
-            NNSs += 1
-
-        oligo = best_left_seq + degen_codon + best_right_seq
-        oligos_dict[codon + 1] = oligo
-
-        if double_synth:
-            oligos_dict[str(codon + 1) + 'repeat'] = oligo
-
-    # Create plots
-    fig, axes = plt.subplots(1, 2, figsize=(8, 4))
-    sns.violinplot(
-        ax=axes[0],
-        data=[best_left_tms, best_right_tms],
-        color='salmon',
-        cut=0
-    )
-    axes[0].set_xlabel('Best tms')
-    axes[0].set_xticklabels(['left', 'right'])
-
-    sns.violinplot(
-        ax=axes[1],
-        data=[best_left_lens, best_right_lens],
-        color='cornflowerblue',
-        cut=0
-    )
-    axes[1].set_xlabel('Best lens')
-    axes[1].set_xticklabels(['left', 'right'])
-
-    # Print statistics (divide by codon_num-1, since we aren't mutating the start codon)
-    total = codon_num - 1
-    print(f'total = {total}')
-    print(f'SSS = {SSSs}, {SSSs / total:.3f}')
-    print(f'SSW = {SSWs}, {SSWs / total:.3f}')
-    print(f'SWS = {SWSs}, {SWSs / total:.3f}')
-    print(f'weak_clamps = {weak_clamps}, {weak_clamps / total:.3f}')
-    print(f'NNKs = {NNKs}')
-    print(f'NNSs = {NNSs}')
-
-    return oligos_dict
-
 
 # ============================================================================
 # FILE I/O
