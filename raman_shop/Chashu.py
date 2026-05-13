@@ -22,6 +22,7 @@ from Bio.Restriction import RestrictionBatch
 from Bio.Data import IUPACData
 from Bio.SeqUtils import MeltingTemp as mt
 import matplotlib.pyplot as plt
+import matplotlib
 
 # ============================================================================
 # CONSTANTS
